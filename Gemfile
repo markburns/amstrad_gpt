@@ -11,3 +11,5 @@ gem 'sinatra-contrib'
 gem "rackup", "~> 2.1"
 gem 'rspec'
 
+gem 'rake'
+gem 'activesupport'
