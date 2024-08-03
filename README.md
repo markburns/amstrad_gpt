@@ -4,8 +4,11 @@ Get your Amstrad CPC to talk to ChatGPT via a USB to RS232 serial cable.
 
 # Getting started
 - Invent the universe
-- Open a time portal to 1985.
-- Alternatively, buy an Amstrad CPC on ebay.
+- Open a time portal to 1985. 👾
+- Alternatively, buy an Amstrad CPC on ebay. 🖥️
+- Somehow obtain? a horrifically expensive RS232 expansion kit 😱
+- <img width="1740" alt="image" src="https://github.com/user-attachments/assets/a340e899-ec10-45f6-89b5-01a935c5f1d5">
+
 - Get a USB to RS232 cable. e.g. https://www.amazon.co.uk/dp/B00QUZY4UG?psc=1&ref=ppx_yo2ov_dt_b_product_details
 - `gem install amstrad_gpt`
 - Plug your Amstrad into your Mac with your cable.
