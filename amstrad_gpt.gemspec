@@ -10,15 +10,15 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Talk to ChatGPT from an Amstrad CPC via a ruby gateway"
   spec.description = "Connects over RS232, supports response streaming"
-  spec.homepage = "github.com/markburns/amstrad_gpt"
+  spec.homepage = "https://github.com/markburns/amstrad_gpt"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/markburns/amstrad_gpt"
-  spec.metadata["changelog_uri"] = "https://github.com/markburns/amstrad_gpt/tree/main/CHANGELOG/md"
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/tree/main/CHANGELOG/md"
 
   gemspec = File.basename(__FILE__)
 
