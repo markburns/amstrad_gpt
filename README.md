@@ -1,4 +1,4 @@
-# AmstradGpt
+# AmstradGPT
 
 Get your Amstrad CPC to talk to ChatGPT via a USB to RS232 serial cable.
 
