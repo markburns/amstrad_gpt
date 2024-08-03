@@ -24,4 +24,4 @@ jobs:
         bundle install
 
     - name: Run Rake tasks
-      run: rake
+      run: bundle exec rake
