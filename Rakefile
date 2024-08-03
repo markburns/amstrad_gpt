@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './lib/spec_helper'
 require 'rake'
 require 'rspec/core/rake_task'
