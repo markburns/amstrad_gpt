@@ -1,0 +1,90 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    base64 (0.2.0)
+    commander (5.0.0)
+      highline (~> 3.0.0)
+    debug (1.9.2)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
+    diff-lcs (1.5.1)
+    faraday (2.10.1)
+      faraday-net_http (>= 2.0, < 3.2)
+      logger
+    faraday-net_http (3.1.1)
+      net-http
+    ffi (1.17.0)
+    highline (3.0.1)
+    io-console (0.7.2)
+    irb (1.14.0)
+      rdoc (>= 4.0.0)
+      reline (>= 0.4.2)
+    logger (1.6.0)
+    multi_json (1.15.0)
+    mustermann (3.0.1)
+      ruby2_keywords (~> 0.0.1)
+    net-http (0.4.1)
+      uri
+    psych (5.1.2)
+      stringio
+    rack (3.1.7)
+    rack-protection (4.0.0)
+      base64 (>= 0.1.0)
+      rack (>= 3.0.0, < 4)
+    rack-session (2.0.0)
+      rack (>= 3.0.0)
+    rackup (2.1.0)
+      rack (>= 3)
+      webrick (~> 1.8)
+    rdoc (6.7.0)
+      psych (>= 4.0.0)
+    reline (0.5.9)
+      io-console (~> 0.5)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
+    ruby2_keywords (0.0.5)
+    rubyserial (0.6.0)
+      ffi (~> 1.9, >= 1.9.3)
+    sinatra (4.0.0)
+      mustermann (~> 3.0)
+      rack (>= 3.0.0, < 4)
+      rack-protection (= 4.0.0)
+      rack-session (>= 2.0.0, < 3)
+      tilt (~> 2.0)
+    sinatra-contrib (4.0.0)
+      multi_json (>= 0.0.2)
+      mustermann (~> 3.0)
+      rack-protection (= 4.0.0)
+      sinatra (= 4.0.0)
+      tilt (~> 2.0)
+    stringio (3.1.1)
+    tilt (2.4.0)
+    uri (0.13.0)
+    webrick (1.8.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  commander
+  debug
+  faraday
+  rackup (~> 2.1)
+  rspec
+  rubyserial
+  sinatra
+  sinatra-contrib
+
+BUNDLED WITH
+   2.5.16

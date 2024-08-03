@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+
+require 'debug'
+require 'commander/import'
+require 'amstrad_gpt'
+
+program :name, 'Amstrad GPT Interface'
+program :version, '0.1.0'
+program :description, 'Facilitates communication between an Amstrad machine and GPT models via serial port.'
+
+env_tty = ENV['AMSTRAD_TTY']
+env_api_key = ENV['OPENAI_API_KEY']
+
+command :run do |c|
+  c.syntax = 'amstrad_gpt run [options]'
+  c.summary = 'Starts the Amstrad GPT interface'
+  c.description = 'This command starts the interface with given TTY and API key options.'
+
+  c.option '--tty STRING',
+    String,
+    'Path to the TTY device (default: ENV["AMSTRAD_TTY"])'
+
+  c.option '--api-key STRING',
+    String,
+    'OpenAI API key (default: ENV["OPEN_AI_KEY"])'
+
+  c.action do |_args, options|
+    tty = options.tty || env_tty
+    api_key = options.api_key || env_api_key
+
+    if tty.nil? || api_key.nil?
+      puts "Both TTY and API key must be provided either through environment variables AMSTRAD_TTY, OPENAI_API_KEY or as options. --tty --api-key"
+      exit(1)
+    end
+
+    AmstradGpt.run( tty: , api_key:)
+  end
+end
