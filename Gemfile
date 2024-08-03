@@ -1,15 +1,8 @@
+# frozen_string_literal: true
 source 'https://rubygems.org'
 
-gem 'sinatra'
+gemspec
+
+gem "rake", "~> 13.0"
+gem "rspec", "~> 3.0"
 gem 'debug'
-gem 'faraday'
-gem 'rubyserial'
-gem 'activesupport'
-gem 'commander'
-gem 'sinatra-contrib'
-
-gem "rackup", "~> 2.1"
-gem 'rspec'
-
-gem 'rake'
-gem 'activesupport'

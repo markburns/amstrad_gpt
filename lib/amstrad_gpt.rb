@@ -1,4 +1,5 @@
 require 'active_support/all'
+require_relative "amstrad_gpt/version"
 
 module AmstradGpt
   def self.run(...)
