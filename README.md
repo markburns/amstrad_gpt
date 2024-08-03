@@ -1,35 +1,63 @@
 # AmstradGpt
 
-TODO: Delete this and the text below, and describe your gem
+Get your Amstrad CPC to talk to ChatGPT via a USB to RS232 serial cable.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/amstrad_gpt`. To experiment with that code, run `bin/console` for an interactive prompt.
+# Getting started
+- Invent the universe
+- Open a time portal to 1985.
+- Alternatively, buy an Amstrad CPC on ebay.
+- Get a USB to RS232 cable. e.g. https://www.amazon.co.uk/dp/B00QUZY4UG?psc=1&ref=ppx_yo2ov_dt_b_product_details
+- `gem install amstrad_gpt`
+- Plug your Amstrad into your Mac with your cable.
+- Find the tty id
 
-## Installation
+```
+ls /dev/tty.*
+```
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+```
+amstrad_gpt run --tty /dev/tty.<your_tty> --api-key <open_ai_api_key>
+```
 
-Install the gem and add to the application's Gemfile by executing:
+in your Amstrad at the ready prompt 
+```
+Amstrad 64K Microcomputer <v1>
+©1984 Amstrad Consumer Electronics plc
+          and Locomotive Software Ltd.
+BASIC 1.0
+Ready
+```
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+type in
+```
+10 MODE 1
+15 PRINT "Enter your question then press [Enter] three times"
+20 OPENIN "#2"
+30 WHILE NOT EOF(2)
+40   A$ = INPUT$(1,#2)
+50   PRINT A$;
+60 WEND
+70 CLOSEIN #2
 
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-
-## Usage
-
-TODO: Write usage instructions here
+RUN
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. 
+Then, run `rake spec` to run the tests. 
+You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. 
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/amstrad_gpt.
+Bug reports and pull requests are welcome on GitHub at https://github.com/markburns/amstrad_gpt.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the 
+[MIT License](https://opensource.org/licenses/MIT).
+
+
