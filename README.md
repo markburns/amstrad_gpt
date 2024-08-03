@@ -22,7 +22,7 @@ ls /dev/tty.*
 amstrad_gpt run --tty /dev/tty.<your_tty> --api-key <open_ai_api_key>
 ```
 
-in your Amstrad at the ready prompt 
+in your Amstrad at the ready prompt
 ```
 Amstrad 64K Microcomputer <v1>
 ©1984 Amstrad Consumer Electronics plc
@@ -45,13 +45,87 @@ type in
 RUN
 ```
 
+# Architecture
+
+```
+                   ┌─────────────────────────────────────────────────┐
+                   │    curl POST /simulat_amstrad_to_gpt_message    │
+                   └─────────────────────────────────────────────────┘
+                                            │
+                                            │        ┌─────────────────────────────────────────────────┐
+                                            │        │                  GET /messages                  │
+                                            │        └─────────────────────────────────────────────────┘
+                                            │                                 │
+                                          ┌─┘                                 │                                                  ─
+┌─────────────────────────────────────────┼───────────────────────────────────┼──────────────────┐
+│ ┌─────────────────────────┐             │    Mac                            │                  │
+│ │ AmstradClientSimulator  │             │  ┌────────────────────────────────┘ ┌────────────────┴──────────────┐
+│ │                         │             │  │                                  │                   ┌──────────┐│            ┌─────────────────────────┐
+│ │                         ├─────────────┼──┼───────────────────┐              │                   │          ││            │                         │
+│ │                         │             ▼  │                   │          ┌──▶│                   │          ││            │                         │
+│ │        ┌────────────────┤      ┌─────────▼───┐               ▼          │   │            ChatGpt│  OpenAI  ◀┼───────────▶│       ChatGPT API       │
+│ │        │                │      │             │        ┌─────────────┐   │   │                   │          ││            │                         │
+│ │        │                ▼      │             │        │             │   │   │                   │          ││            │                         │
+│ │        │   Interface    │      │             │   ┌───▶│             │   │   │                   └──────────┘│            └─────────────────────────┘
+│ │        │                │      │             │   │    │   Gateway   │   │   └────────────────┬──────────────┘
+│ │        │  ┌──────────┐  │      │             messages │             │◀──┘                    │
+│ │        │  │  Socket  │  │      │  WebServer  │   │    │             │                        │
+│ │        └──┴──────────┴──┤      │             │───┘    │             │      ┌────────────────┐│
+│ │                 ▲       │      │             │        └─────────────┘      │                ││
+│ └─────────────────┼───────┘      │             │               ▲             │                ││
+│             ┌─────┘              │             │               │             │   Interface    ││
+│             │                    │             │               └────────────▶│                ││
+│             │                    │             │                             │   ┌──────────┐ ││
+│             │                    └─────────────┘                             │   │  Socket  │ ││
+│    ┌────────────────┐                   │                                    └───┴──────────┴─┘│
+│    │                │                   │                                              ▲       │
+│    │                │                   │                                              │       │
+│    │     socat      │      /simulate_   │                                              │       │
+│    │                │◀─────amstrad_to───┘                                              │       │
+│    │                │      _gpt_messa                    ┌─────────────────────────────┘       │
+│    │                │                                    │                                     │
+│    └────────────────┘                                    │                                     │
+└──────────────────────────────────────────────────────────┼─────────────────────────────────────┘
+                                                           ▼
+                                              ┌─────────────────────────┐
+                                              │                         │
+                                              │  USB to USB-C adapter   │
+                                              │                         │
+                                              └─────────────────────────┘
+                                                           ▲
+                                                           ▼
+                                               ┌───────────────────────┐
+                                               │  9 pin RS232 to USB   │
+                                               └───────────────────────┘       ┌─────────────────────────────────┐
+                                                           ▲                   │           ┌───────────────────┐ │
+                                                           │                   │           │                   │ │
+                                                           │                   │           ▼                   │ │
+                                              ┌─────────────────────────┐      │    ┌─────────────┐            │ │
+                                              │ 25 pin to 9 pin adapter │      │    │ client.bas  │            │ │          ┌─────────────────────────────────────────────────┐
+                                              └─────────────────────────┘      │    │             │            └─┼──────────│          Amstrad User types at prompt           │
+                                                           ▲                   │    │             │              │          └─────────────────────────────────────────────────┘
+                                                           │                   │    │             │────────────┐ │
+                                                           ▼                   │    │             │            │ │
+                                               ┌┬───────────────────┬─┐        │    │             │            │ │           ┌─────────────────────────────────────────────────┐
+                                               ││25 pin Serial Port │ │        │    └─────────────┘            └─┼──────────▶│       Amstrad User sees prompt on screen        │
+                                               │└───────────────────┘ │        │           ▲                     │           └─────────────────────────────────────────────────┘
+                                               │    RS232 Adapter     │        │           │                     │
+                                               │                      │        │           │                     │
+                                               │                      │        │           ▼                     │
+                                               └──────────────────────┘        │  ┌─────────────────┐            │
+                                                           ▲                   │  │ 50 pin FDD port │            │
+                                                           │                   └──┴─────────────────┴────────────┘
+                                                           │                               ▲
+                                                           │                               │
+                                                           └───────────────────────────────┘
+```
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. 
-Then, run `rake spec` to run the tests. 
+After checking out the repo, run `bin/setup` to install dependencies.
+Then, run `rake spec` to run the tests.
 You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. 
+To install this gem onto your local machine, run `bundle exec rake install`.
 To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
@@ -60,7 +134,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/markbu
 
 ## License
 
-The gem is available as open source under the terms of the 
+The gem is available as open source under the terms of the
 [MIT License](https://opensource.org/licenses/MIT).
 
 
