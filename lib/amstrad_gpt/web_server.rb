@@ -17,7 +17,8 @@ module AmstradGpt
       next 'No simulator running' if simulator.nil?
 
       simulator.simulate_message_send(params[:message])
-      "Message sent"
+
+      "Message sent\n"
     end
 
     get '/simulated_messages' do
@@ -37,7 +38,7 @@ module AmstradGpt
     def messages_list(messages)
       messages.map do |message|
         "<li>#{message[:role]}: #{message[:content]}</li>"
-      end
+      end.join("\n")
     end
   end
 end

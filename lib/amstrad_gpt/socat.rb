@@ -6,9 +6,11 @@ module AmstradGpt
     end
 
     def setup
+      puts '====================================='
       socat_install_message unless socat_installed?
 
       check_and_setup_socat
+      puts '====================================='
     end
 
 

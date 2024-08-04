@@ -1,6 +1,7 @@
 require 'amstrad_gpt/interface'
 require 'amstrad_gpt/amstrad'
 require 'amstrad_gpt/socat'
+require 'amstrad_gpt/simulated_amstrad'
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 # ┃ POST /simulate_amstrad_to_gpt_message ┃
@@ -44,20 +45,20 @@ module AmstradGpt
     end
 
     def simulate_message_send(message)
-      simulated_amstrad.write("#{message}\n\n\n")
+      message = "#{message}\n\n\n" unless message.end_with?("\n\n\n")
+
+      simulated_amstrad.type(message)
     end
 
     def setup
-      Socat.new(amstrad_simulated_tty:, 
-                mac_simulated_tty:
-               ).setup
+      Socat.new(amstrad_simulated_tty:, mac_simulated_tty:).setup
 
       receive_from_gpt
     end
 
     def receive_from_gpt
-      simulated_amstrad.receive_from_gpt do |message|
-        received_messages << message
+      simulated_amstrad.receive_from_gpt do |content|
+        received_messages.push({role: 'assistant', content:})
       end
     end
 
@@ -74,7 +75,7 @@ module AmstradGpt
     private
 
     def simulated_amstrad
-      @simulated_amstrad ||= Interface.new(amstrad_simulated_tty:)
+      @simulated_amstrad ||= SimulatedAmstrad.new(amstrad_simulated_tty:)
     end
 
     def amstrad_simulated_tty = "/tmp/tty.amstrad_simulated_tty"

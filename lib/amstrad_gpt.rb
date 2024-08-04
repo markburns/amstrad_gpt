@@ -6,6 +6,8 @@ module AmstradGpt
     def run(tty:, api_key:)
       require 'amstrad_gpt/amstrad'
       start_gateway(tty:, amstrad: Amstrad.new(tty:), api_key:)
+      puts '====================================='
+      web_server.join
     end
 
     def run_simulation(api_key:)
@@ -26,6 +28,7 @@ module AmstradGpt
       require 'amstrad_gpt/gateway'
       gateway = Gateway.run(amstrad:, api_key:)
       puts "AmstradGpt Gateway started on #{tty}"
+      puts '====================================='
 
       require 'amstrad_gpt/web_server'
       AmstradGpt::WebServer.gateway = gateway

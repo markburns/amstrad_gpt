@@ -35,12 +35,12 @@ RSpec.describe AmstradGpt::Gateway do
     end
   end
 
-  describe '#handle' do
+  describe '#forward' do
     it 'sends the message to ChatGpt and replies with the response' do
       message = 'test_message'
       expect(chat_gpt).to receive(:send_message).with(message).and_return('response_message')
       expect(amstrad).to receive(:send_to_amstrad).with('response_message')
-      subject.send(:handle, message)
+      subject.send(:forward, message)
     end
   end
 

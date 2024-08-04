@@ -1,11 +1,18 @@
 require 'amstrad_gpt/interface'
+require 'amstrad_gpt/debug'
 
 module AmstradGpt
   class Amstrad
+    include Debug
+
     def initialize(tty:, base_sleep_duration: 0.1)
       @tty = tty
       @base_sleep_duration = base_sleep_duration
       setup_mutable_state
+    end
+
+    def name
+      "Amstrad.#{tty}"
     end
 
     def start
@@ -28,6 +35,8 @@ module AmstradGpt
 
     def send_to_amstrad(message)
       mutex.synchronize do
+        debug("Sending to Amstrad: #{message}")
+        message << "\n\n\n" unless message.end_with?("\n\n\n")
         interface.write(message)
       end
     end
@@ -38,7 +47,10 @@ module AmstradGpt
       new_thread_running_loop do
         message = maybe_message?
 
-        yield message if message.present?
+        if message.present?
+          debug("Received from Amstrad: #{message}")
+          yield message
+        end
 
         sleep(base_sleep_duration * rand)
       end

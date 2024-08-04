@@ -19,7 +19,6 @@ module AmstradGpt
       @messages ||= []
     end
 
-
     private
 
     def post
@@ -58,6 +57,7 @@ module AmstradGpt
     def append(message)
       messages.push message.transform_keys!(&:to_sym)
     end
+
     attr_reader :api_key, :prompt
   end
 end

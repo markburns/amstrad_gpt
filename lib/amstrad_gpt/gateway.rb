@@ -1,8 +1,11 @@
 require 'amstrad_gpt/chat_gpt'
 require 'amstrad_gpt/amstrad'
+require 'amstrad_gpt/debug'
 
 module AmstradGpt
   class Gateway
+    include Debug
+
     PROMPT = <<~PROMPT.freeze
       A portal to the past has been opened.
       As far as the user is concerned you are an all knowing AI.
@@ -25,9 +28,13 @@ module AmstradGpt
       @amstrad = amstrad
     end
 
+    def name
+      'Gateway'
+    end
+
     def run
       amstrad.receive_from_amstrad do |message|
-        handle(message)
+        forward(message)
       end
     end
 
@@ -35,12 +42,17 @@ module AmstradGpt
 
     private
 
-    def handle(message)
-      puts message
+    def forward(message)
+      debug "Forwarding message: #{message}"
 
       reply = chat_gpt.send_message(message)
 
+      debug "Received reply from ChatGPT: #{reply}"
+
+      debug "Sending to Amstrad: #{reply}"
+
       amstrad.send_to_amstrad(reply)
+      debug "Sent to Amstrad: #{reply}"
     end
 
     def chat_gpt
