@@ -48,7 +48,9 @@ module AmstradGpt
     end
 
     def setup
-      Socat.new.setup
+      Socat.new(amstrad_simulated_tty:, 
+                mac_simulated_tty:
+               ).setup
 
       receive_from_gpt
     end

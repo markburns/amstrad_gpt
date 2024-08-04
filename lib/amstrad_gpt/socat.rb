@@ -1,15 +1,16 @@
 module AmstradGpt
   class Socat
+    def initialize(amstrad_simulated_tty:, mac_simulated_tty:)
+      @amstrad_simulated_tty = amstrad_simulated_tty
+      @mac_simulated_tty = mac_simulated_tty
+    end
+
     def setup
       socat_install_message unless socat_installed?
 
-      setup_failure_message unless check_and_setup_socat
+      check_and_setup_socat
     end
 
-    def setup_failure_message
-      puts "Failed to setup or verify socat configuration"
-      exit 2
-    end
 
     def socat_install_message
       puts <<~INSTALL_MESSAGE
@@ -26,6 +27,7 @@ module AmstradGpt
 
     def check_and_setup_socat
       puts "Checking socat configuration..."
+
       if File.exist?(amstrad_simulated_tty) && File.exist?(mac_simulated_tty)
         puts "socat already configured with #{amstrad_simulated_tty} and #{mac_simulated_tty}"
       else
@@ -44,5 +46,7 @@ module AmstradGpt
 
       puts "socat setup"
     end
+
+    attr_reader :amstrad_simulated_tty, :mac_simulated_tty
   end
 end
