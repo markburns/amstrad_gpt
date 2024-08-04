@@ -47,6 +47,24 @@ RUN
 
 # Architecture
 
+Components
+
+- Mac physical machine
+- Amstrad physical machine
+- OpenAI API 3rd party API
+- `socat` software to run on your Mac to create a virtual socket
+- Classes
+  - `Gateway` - coordinates sending and receiving messages between the Amstrad/ChatGPT/AmstradClientSimulator
+  - `Amstrad` - abstracts commonicating with the physical machine
+  - `AmstradClientSimulator` - quacks like an `Amstrad` sending messages down a serial port, accessed through the web api
+  - `ChatGpt` - abstracts communicating with the ChatGPT API
+  - `Interface` - wraps the socket library
+  - `Serial` - the socket library from the `rubyserial` gem
+- Web server endpoints
+  - `GET /messages` inspect interactions
+  - `POST /simulate_amstrad_to_gpt_message` Triggers the AmstradClientSimulator via a socket set up in socat
+  - `POST /send_message` Short circuits straight to the gateway sending a message to ChatGPT
+
 ```
 ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ _           _                                                                          ║
@@ -73,6 +91,7 @@ RUN
 ║     └────────────────┘                    │                                │┌───────────────┐                    │              ║
 ║             ┌─────────────────────────────┼────────────────────────────────┘│Amstrad (class)│                    ▼              ║
 ║             │                             │                                 │     fake      │        ┌───────────────────────┐  ║
+║             │                             │                                 │               │        ┌───────────────────────┐  ║
 ║             │                             │                                 │               │        │        ChatGpt        │  ║
 ║             │                  ┌──────────┼─────────────────────────────────┤               ├──┐     │                       │  ║   ╔═════════════════╗
 ║             │                  │          │            AmstradSimulator     │               │  │     │           ┌──────────┐│  ║   ║                 ║
@@ -110,7 +129,7 @@ RUN
              ▼                 ║                             │ client.bas  │        ┏━━━━━━━━━━━━━━━━━━━━━┓                          ║
 ╔═════════════════════════╗    ║                             │             │        ┃                     ┃                          ║
 ║ 25 pin to 9 pin adapter ║    ║    ╔═════════════════╗      │             │        ┃  Amstrad User sees  ┃                          ║
-╚═════════════════════════╝   ┌╬───▶║ 50 pin FDD port ║◀────▶│             │───────▶┃  prompt on screen   ┃                          ║
+╚═════════════════════════╝   ┌╬───▶║ 50 pin FDD port ║◀────▶│             │───────▶┃  reply on screen    ┃                          ║
              ▲                │║    ╚═════════════════╝      │             │        ┃                     ┃                          ║
              │                │║        _                    │             │     _  ┗━━━━━━━━━━━━━━━━━━━━━┛                     _    ║
              ▼                │║      _(_)_                  └─────────────┘    (_)                                            (_)   ║
