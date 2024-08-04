@@ -9,7 +9,12 @@ module AmstradGpt
     end
 
     def start
-      @reader_thread = Thread.new { read_bytes_loop }
+      @reader_thread = new_thread_running_loop do
+        char = interface.next_character
+
+        mutex.synchronize { buffer << char } if char
+        sleep(base_sleep_duration * rand)
+      end
     end
 
     def stop
@@ -26,16 +31,12 @@ module AmstradGpt
     end
 
     def receive_from_amstrad
-      Thread.new do
-        loop do
-          break unless @running
+      new_thread_running_loop do
+        message = maybe_message?
 
-          message = maybe_message?
+        yield message if message.present?
 
-          yield message if message.present?
-
-          sleep(base_sleep_duration * rand)
-        end
+        sleep(base_sleep_duration * rand)
       end
     end
 
@@ -43,15 +44,6 @@ module AmstradGpt
 
     def interface
       @interface ||= Interface.new(tty:)
-    end
-
-    def read_bytes_loop
-      while @running
-        char = interface.next_character
-
-        mutex.synchronize { buffer << char } if char
-        sleep(base_sleep_duration * rand)
-      end
     end
 
     def maybe_message?
@@ -71,6 +63,12 @@ module AmstradGpt
       @mutex = Mutex.new
       @buffer = ""
       @running = true
+    end
+
+    def new_thread_running_loop
+      Thread.new do
+        yield while @running
+      end
     end
 
     attr_reader :tty, :mutex, :base_sleep_duration, :buffer
