@@ -19,7 +19,7 @@ module AmstradGpt
     private
 
     def serial_port
-      @serial_port ||= Serial.new(@tty, baud_rate, data_bits, stop_bits, parity)
+      @serial_port ||= Serial.new(@tty, baud_rate, data_bits, parity, stop_bits)
     end
 
     def baud_rate

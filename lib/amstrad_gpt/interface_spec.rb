@@ -51,7 +51,7 @@ RSpec.describe AmstradGpt::Interface do
     it 'creates a serial port with correct parameters' do
       subject.shutdown # any method with side effects that indirectly instantiates the serial port
 
-      expect(Serial).to have_received(:new).with(tty, 9600, 8, 1, :none)
+      expect(Serial).to have_received(:new).with(tty, 9600, 8, :none, 1)
     end
   end
 end

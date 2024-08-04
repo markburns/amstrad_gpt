@@ -2,14 +2,35 @@ require 'active_support/all'
 require_relative "amstrad_gpt/version"
 
 module AmstradGpt
-  def self.run(...)
-    require 'amstrad_gpt/gateway'
+  class << self
+    def run(tty:, api_key:)
+      require 'amstrad_gpt/amstrad'
+      start_gateway(tty:, amstrad: Amstrad.new(tty:), api_key:)
+    end
 
-    gateway = Gateway.run(...)
-    puts "AmstradGpt Gateway started on #{gateway.tty}"
+    def run_simulation(api_key:)
+      require 'amstrad_gpt/amstrad_simulator'
 
-    require 'amstrad_gpt/web_server'
-    AmstradGpt::WebServer.gateway = gateway
-    AmstradGpt::WebServer.run!
+      simulator = AmstradGpt::AmstradSimulator.new
+      simulator.setup
+
+      start_gateway(tty: simulator.mac_simulated_tty,
+                    amstrad: simulator.fake_amstrad,
+                    api_key:,
+                    simulator:)
+    end
+
+    private
+
+    def start_gateway(tty:, amstrad:, api_key:, simulator: nil)
+      require 'amstrad_gpt/gateway'
+      gateway = Gateway.run(amstrad:, api_key:)
+      puts "AmstradGpt Gateway started on #{tty}"
+
+      require 'amstrad_gpt/web_server'
+      AmstradGpt::WebServer.gateway = gateway
+      AmstradGpt::WebServer.simulator = simulator
+      AmstradGpt::WebServer.run!
+    end
   end
 end

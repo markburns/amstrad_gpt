@@ -20,11 +20,9 @@ module AmstradGpt
       new(...).tap(&:run)
     end
 
-    attr_reader :tty
-
-    def initialize(api_key:, tty:)
+    def initialize(api_key:, amstrad:)
       @api_key = api_key
-      @tty = tty
+      @amstrad = amstrad
     end
 
     def run
@@ -40,19 +38,15 @@ module AmstradGpt
     def handle(message)
       puts message
 
-      message = chat_gpt.send_message(message)
+      reply = chat_gpt.send_message(message)
 
-      amstrad.send_to_amstrad(message)
-    end
-
-    def amstrad
-      @amstrad ||= Amstrad.new(tty:)
+      amstrad.send_to_amstrad(reply)
     end
 
     def chat_gpt
       @chat_gpt ||= ChatGpt.new(api_key:, prompt: PROMPT)
     end
 
-    attr_reader :api_key
+    attr_reader :api_key, :amstrad
   end
 end

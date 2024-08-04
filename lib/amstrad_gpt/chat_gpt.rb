@@ -27,7 +27,6 @@ module AmstradGpt
         req.body = {
           model: 'gpt-4o',
           messages: [system, *messages],
-          max_tokens: 150
         }.to_json
       end
     end

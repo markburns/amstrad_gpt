@@ -35,6 +35,38 @@ command :run do |c|
       exit(1)
     end
 
-    AmstradGpt.run( tty: , api_key:)
+    AmstradGpt.run(tty: , api_key:)
+  end
+end
+
+command :simulate do |c|
+  c.syntax = 'amstrad_gpt simulate [options]'
+  c.summary = 'Starts the Amstrad GPT gateway plus a fake Amstrad for testing'
+  c.description = 'POST to http://localhost:4567/simulate_message_send to send a message from the Amstrad.'
+  c.option '--api-key STRING', String,
+    'OpenAI API key (default: ENV["OPEN_AI_KEY"])'
+
+  c.option '--amstrad-simulated-tty',
+    String,
+    'Path to the Amstrad end of the simulated serial TTY device, e.g. /dev/ttyS1',
+    required: true
+
+  c.option '--mac-simulated-tty',
+    String,
+    'Path to the Mac end of the simulated serial TTY device, e.g. /dev/ttyS2',
+    required: true
+
+  c.action do |_args, options|
+    api_key = options.api_key || env_api_key
+
+    missing_args = false
+
+    if api_key.nil?
+      puts "API key must be provided either through environment variables OPENAI_API_KEY or as options. --api-key"
+      missing_args = true
+      exit 1
+    end
+
+    AmstradGpt.run_simulation(api_key:)
   end
 end

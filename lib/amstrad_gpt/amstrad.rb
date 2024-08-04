@@ -31,6 +31,8 @@ module AmstradGpt
     end
 
     def receive_from_amstrad
+      start
+
       new_thread_running_loop do
         message = maybe_message?
 
