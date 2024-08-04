@@ -19,7 +19,7 @@ module AmstradGpt
       interface.shutdown
     end
 
-    def reply(message)
+    def send_to_amstrad(message)
       mutex.synchronize do
         interface.write(message)
       end

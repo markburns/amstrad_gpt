@@ -42,7 +42,7 @@ module AmstradGpt
 
       message = chat_gpt.send_message(message)
 
-      amstrad.reply(message)
+      amstrad.send_to_amstrad(message)
     end
 
     def amstrad

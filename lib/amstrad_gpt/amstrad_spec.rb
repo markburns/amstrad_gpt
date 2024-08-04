@@ -41,11 +41,11 @@ RSpec.describe AmstradGpt::Amstrad do
     end
   end
 
-  describe '#reply' do
+  describe '#send_to_amstrad' do
     it 'writes a message to the serial port' do
       message = "Hello, Amstrad!"
       expect(serial_port).to receive(:write).with(message)
-      subject.reply(message)
+      subject.send_to_amstrad(message)
     end
   end
 

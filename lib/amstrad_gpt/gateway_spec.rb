@@ -5,7 +5,7 @@ RSpec.describe AmstradGpt::Gateway do
 
   let(:api_key) { 'fake_api_key' }
   let(:tty) { '/dev/ttyS0' }
-  let(:amstrad) { instance_double(AmstradGpt::Amstrad, receive_messages: nil, reply: nil) }
+  let(:amstrad) { instance_double(AmstradGpt::Amstrad, receive_messages: nil, send_to_amstrad: nil) }
   let(:chat_gpt) { instance_double(AmstradGpt::ChatGpt, send_message: 'response_message') }
 
   before do
@@ -39,7 +39,7 @@ RSpec.describe AmstradGpt::Gateway do
     it 'sends the message to ChatGpt and replies with the response' do
       message = 'test_message'
       expect(chat_gpt).to receive(:send_message).with(message).and_return('response_message')
-      expect(amstrad).to receive(:reply).with('response_message')
+      expect(amstrad).to receive(:send_to_amstrad).with('response_message')
       subject.send(:handle, message)
     end
   end
