@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "amstrad_gpt"
+require "debug"
 require "rspec"
 
 RSpec.configure do |config|
