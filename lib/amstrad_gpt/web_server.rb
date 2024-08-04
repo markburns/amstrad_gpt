@@ -20,10 +20,24 @@ module AmstradGpt
       "Message sent"
     end
 
-    get '/' do
-      gateway.messages.map do |message|
-        "#{message[:role]}: #{message[:content]}"
-      end.join("<br/>")
+    get '/simulated_messages' do
+      list simulator.received_messages
+    end
+
+    get '/messages' do
+      list gateway.messages
+    end
+
+    private
+
+    def list(messages)
+      "<ul>#{messages_list(messages)}</ul>"
+    end
+
+    def messages_list(messages)
+      messages.map do |message|
+        "<li>#{message[:role]}: #{message[:content]}</li>"
+      end
     end
   end
 end

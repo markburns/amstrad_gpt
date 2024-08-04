@@ -1,5 +1,6 @@
 require 'amstrad_gpt/interface'
 require 'amstrad_gpt/amstrad'
+require 'amstrad_gpt/socat'
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 # ┃ POST /simulate_amstrad_to_gpt_message ┃
@@ -43,11 +44,17 @@ module AmstradGpt
     end
 
     def simulate_message_send(message)
-      amstrad_simulated_interface.write("#{message}\n\n\n")
+      simulated_amstrad.write("#{message}\n\n\n")
     end
 
-    def receive_from_fake_amstrad
-      fake_amstrad.received_from_amstrad do |message|
+    def setup
+      Socat.new.setup
+
+      receive_from_gpt
+    end
+
+    def receive_from_gpt
+      simulated_amstrad.receive_from_gpt do |message|
         received_messages << message
       end
     end
@@ -60,61 +67,15 @@ module AmstradGpt
       @fake_amstrad ||= Amstrad.new(tty: mac_simulated_tty, base_sleep_duration:)
     end
 
-    def setup
-      socat_install_message unless socat_installed?
-
-      setup_failure_message unless check_and_setup_socat
-    end
-
     def mac_simulated_tty = "/tmp/tty.mac_simulated_tty"
 
     private
 
-    def amstrad_simulated_interface
-      @amstrad_simulated_interface ||= Interface.new(tty: amstrad_simulated_tty)
-    end
-
-    def setup_failure_message
-      puts "Failed to setup or verify socat configuration"
-      exit 2
-    end
-
-    def socat_install_message
-      puts <<~INSTALL_MESSAGE
-        socat not installed, please run:
-
-        brew install socat
-      INSTALL_MESSAGE
-      exit 1
+    def simulated_amstrad
+      @simulated_amstrad ||= Interface.new(amstrad_simulated_tty:)
     end
 
     def amstrad_simulated_tty = "/tmp/tty.amstrad_simulated_tty"
-
-    def socat_installed?
-      system("which socat > /dev/null 2>&1")
-    end
-
-    def check_and_setup_socat
-      puts "Checking socat configuration..."
-      if File.exist?(amstrad_simulated_tty) && File.exist?(mac_simulated_tty)
-        puts "socat already configured with #{amstrad_simulated_tty} and #{mac_simulated_tty}"
-      else
-        setup_socat
-      end
-
-      true
-    end
-
-    def setup_socat
-      require 'open3'
-      puts "Configuring socat..."
-      setup_command = "socat -d -d pty,raw,echo=0,link=#{amstrad_simulated_tty} pty,raw,echo=0,link=#{mac_simulated_tty} &"
-      puts setup_command
-      system(setup_command)
-
-      puts "socat setup"
-    end
-
     attr_reader :base_sleep_duration
   end
 end
