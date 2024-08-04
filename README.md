@@ -52,10 +52,11 @@ Components
 - Mac physical machine
 - Amstrad physical machine
 - OpenAI API 3rd party API
+- `socat` software to run on your Mac to create a virtual socket
 - Classes
   - `Gateway` - coordinates sending and receiving messages between the Amstrad/ChatGPT/AmstradClientSimulator
   - `Amstrad` - abstracts commonicating with the physical machine
-  = `AmstradClientSimulator` - quacks like an `Amstrad` can send messages to it through the web api
+  - `AmstradClientSimulator` - quacks like an `Amstrad` sending messages down a serial port, accessed through the web api
   - `ChatGpt` - abstracts communicating with the ChatGPT API
   - `Interface` - wraps the socket library
   - `Serial` - the socket library from the `rubyserial` gem
