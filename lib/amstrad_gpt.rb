@@ -9,9 +9,9 @@ module AmstradGpt
     end
 
     def run_simulation(api_key:)
-      require 'amstrad_gpt/amstrad_simulator'
+      require 'amstrad_gpt/connection_simulator'
 
-      simulator = AmstradGpt::AmstradSimulator.new
+      simulator = AmstradGpt::ConnectionSimulator.new
       simulator.setup
 
       start_gateway(tty: simulator.mac_simulated_tty,

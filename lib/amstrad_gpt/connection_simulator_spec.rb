@@ -1,8 +1,8 @@
-require_relative './amstrad_simulator'
+require_relative './connection_simulator'
 
-RSpec.describe AmstradGpt::AmstradSimulator do
+RSpec.describe AmstradGpt::ConnectionSimulator do
   subject do
-    AmstradGpt::AmstradSimulator.new(
+    AmstradGpt::ConnectionSimulator.new(
       base_sleep_duration:
     )
   end

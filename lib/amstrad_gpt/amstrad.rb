@@ -19,8 +19,10 @@ module AmstradGpt
 
     def stop
       @running = false
+
       @reader_thread.join
       @reader_thread = nil
+
       interface.shutdown
     end
 

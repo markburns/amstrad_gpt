@@ -17,7 +17,7 @@ require 'amstrad_gpt/amstrad'
 #   └────────────────┘                  │                                   ┌───────▼───────┐
 #                                       │                                   │Amstrad (class)│
 #                              ┌────────│───────────────────────────────────┤  fake         ├──┐
-#                              │        │              AmstradSimulator     │               │  │
+#                              │        │              ConnectionSimulator     │               │  │
 #                              │  ┌─────│───────┐                           │               │  │
 #                              │  │ ┌───▼──────┐│                           │               │  │
 #                              │  │ │  Socket  ││─┐  ┏━━━━━━━━━━┓           │┌─────────────┐│  │
@@ -37,13 +37,23 @@ require 'amstrad_gpt/amstrad'
 #  quacks just like the real Amstrad, so reads the messages in a loop
 #  and forwards to the gateway for ordinary processing
 module AmstradGpt
-  class AmstradSimulator
+  class ConnectionSimulator
     def initialize(base_sleep_duration: 0.1)
       @base_sleep_duration = base_sleep_duration
     end
 
     def simulate_message_send(message)
       amstrad_simulated_interface.write("#{message}\n\n\n")
+    end
+
+    def receive_from_fake_amstrad
+      fake_amstrad.received_from_amstrad do |message|
+        received_messages << message
+      end
+    end
+
+    def received_messages
+      @received_messages ||= []
     end
 
     def fake_amstrad
