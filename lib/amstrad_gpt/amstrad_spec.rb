@@ -49,7 +49,7 @@ RSpec.describe AmstradGpt::Amstrad do
     end
   end
 
-  describe '#receive_messages' do
+  describe '#receive_from_amstrad' do
     it 'yields received messages' do
       allow(serial_port).to receive(:getbyte).and_return(
         'a'.ord,
@@ -63,7 +63,7 @@ RSpec.describe AmstradGpt::Amstrad do
 
       received_messages = []
 
-      subject.receive_messages do |message|
+      subject.receive_from_amstrad do |message|
         received_messages << message
       end
 

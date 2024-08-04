@@ -25,7 +25,7 @@ module AmstradGpt
       end
     end
 
-    def receive_messages
+    def receive_from_amstrad
       Thread.new do
         loop do
           break unless @running

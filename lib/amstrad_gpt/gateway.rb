@@ -28,7 +28,7 @@ module AmstradGpt
     end
 
     def run
-      amstrad.receive_messages do |message|
+      amstrad.receive_from_amstrad do |message|
         handle(message)
       end
     end
