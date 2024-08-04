@@ -47,6 +47,23 @@ RUN
 
 # Architecture
 
+Components
+
+- Mac physical machine
+- Amstrad physical machine
+- OpenAI API 3rd party API
+- Classes
+  - `Gateway` - coordinates sending and receiving messages between the Amstrad/ChatGPT/AmstradClientSimulator
+  - `Amstrad` - abstracts commonicating with the physical machine
+  = `AmstradClientSimulator` - quacks like an `Amstrad` can send messages to it through the web api
+  - `ChatGpt` - abstracts communicating with the ChatGPT API
+  - `Interface` - wraps the socket library
+  - `Serial` - the socket library from the `rubyserial` gem
+- Web server endpoints
+  - GET `/messages` inspect interactions
+  - POST 'simulate_amstrad_to_gpt_message' Triggers the AmstradClientSimulator via a socket set up in socat
+  - POST '/send_message' Short circuits straight to the gateway sending a message to ChatGPT
+
 ```
                    ┌─────────────────────────────────────────────────┐
                    │    curl POST /simulat_amstrad_to_gpt_message    │
