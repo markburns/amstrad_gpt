@@ -60,9 +60,9 @@ Components
   - `Interface` - wraps the socket library
   - `Serial` - the socket library from the `rubyserial` gem
 - Web server endpoints
-  - GET `/messages` inspect interactions
-  - POST 'simulate_amstrad_to_gpt_message' Triggers the AmstradClientSimulator via a socket set up in socat
-  - POST '/send_message' Short circuits straight to the gateway sending a message to ChatGPT
+  - `GET /messages` inspect interactions
+  - `POST /simulate_amstrad_to_gpt_message` Triggers the AmstradClientSimulator via a socket set up in socat
+  - `POST /send_message` Short circuits straight to the gateway sending a message to ChatGPT
 
 ```
                    ┌─────────────────────────────────────────────────┐
