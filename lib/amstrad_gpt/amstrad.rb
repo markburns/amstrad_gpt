@@ -32,9 +32,7 @@ module AmstradGpt
 
           message = maybe_message?
 
-          if message
-            yield message if message.length.positive?
-          end
+          yield message if message.present?
 
           sleep(base_sleep_duration * rand)
         end
