@@ -40,4 +40,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'commander'
   spec.add_dependency 'sinatra-contrib'
   spec.add_dependency "rackup", "~> 2.1"
+  spec.add_dependency "chunky_png"
 end
