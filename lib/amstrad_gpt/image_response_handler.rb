@@ -7,36 +7,67 @@ module AmstradGpt
   class ImageResponseHandler
     include Debug
 
-    def initialize(reply:, amstrad:)
+    def initialize(reply:, amstrad:, connection:)
+      @api_ke
       @reply = reply
       @amstrad = amstrad
     end
 
     def process_and_send
       dalle_prompt = extract_dalle_prompt(@reply)
-      image_url = generate_image(dalle_prompt)
-      processed_image = process_image(image_url)
-      encoded_image = encode_image_for_amstrad(processed_image)
-      @amstrad.send_to_amstrad("IMG:#{encoded_image}")
+
+      begin
+        image_url = generate_image(dalle_prompt)
+        processed_image = process_image(image_url)
+        encoded_image = encode_image_for_amstrad(processed_image)
+        amstrad.send_to_amstrad("IMG:#{encoded_image}")
+      rescue StandardError => e
+        error_message = "Error generating image: #{e.message}"
+        amstrad.send_to_amstrad("TXT:#{error_message}")
+      end
     end
 
     private
 
     def extract_dalle_prompt(reply)
-      match = reply.match(/\{dalle: "(.*?)"\}/)
+      # the regex is a bit flexible here
+      # as ChatGPT is not consistent in the format of the reply
+      match = reply.match(/\{'?dalle'?: "(.*?)"?\}?/)
       match[1] if match
     end
 
     def generate_image(prompt)
-      # This is a placeholder. You'll need to implement the actual DALL-E API call here.
-      # For now, we'll just return a placeholder image URL.
-      "https://via.placeholder.com/320x200"
+      api_key = ENV['OPENAI_API_KEY']
+      url = 'https://api.openai.com/v1/images/generations'
+
+      body = {
+        prompt:,
+        n: 1,
+        size: '512x512',
+        response_format: 'url'
+      }
+
+      connection = Faraday.new(url:) do |faraday|
+        faraday.headers['Content-Type'] = 'application/json'
+        faraday.headers['Authorization'] = "Bearer #{api_key}"
+        faraday.adapter Faraday.default_adapter
+      end
+
+      response = connection.post do |req|
+        req.body = body.to_json
+      end
+
+      if response.success?
+        JSON.parse(response.body)['data'][0]['url']
+      else
+        raise "Image generation failed: #{response.status} #{response.body}"
+      end
     end
 
     def process_image(image_url)
       # Download the image
       image_data = URI.open(image_url).read
-      
+
       # Save the image temporarily
       temp_file = Tempfile.new(['image', '.png'])
       temp_file.binmode
@@ -83,5 +114,7 @@ module AmstradGpt
       encoded << count << last
       encoded
     end
+
+    attr_reader :reply, :amstrad
   end
 end
