@@ -34,10 +34,12 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'sinatra'
+  spec.add_dependency 'crack'
   spec.add_dependency 'faraday'
   spec.add_dependency 'rubyserial'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'commander'
   spec.add_dependency 'sinatra-contrib'
   spec.add_dependency "rackup", "~> 2.1"
+  spec.add_dependency "chunky_png"
 end

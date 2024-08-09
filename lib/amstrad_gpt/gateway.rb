@@ -1,6 +1,8 @@
 require 'amstrad_gpt/chat_gpt'
 require 'amstrad_gpt/amstrad'
 require 'amstrad_gpt/debug'
+require 'amstrad_gpt/text_response_handler'
+require 'amstrad_gpt/image_response_handler'
 
 module AmstradGpt
   class Gateway
@@ -17,6 +19,10 @@ module AmstradGpt
       I.e. any future references beyond 1985 need explaining or relating back to things the user would know about.
 
       You MUST communicate in ASCII to avoid mojibake for the user.
+
+      If the user requests an image, respond with a message in this format:
+      {'role': 'assistant', 'content': "{dalle: \"dalle prompt goes here\"}"}
+      Replace "dalle prompt goes here" with an appropriate prompt for DALL-E to generate the requested image.
     PROMPT
 
     def self.run(...)
@@ -40,6 +46,8 @@ module AmstradGpt
 
     delegate :send_message, :messages, to: :chat_gpt
 
+    attr_reader :amstrad, :api_key
+
     private
 
     def forward(message)
@@ -49,16 +57,17 @@ module AmstradGpt
 
       debug "Received reply from ChatGPT: #{reply}"
 
-      debug "Sending to Amstrad: #{reply}"
+      handler = response_handler_klass(reply)
+      debug "Using handler: #{handler.class}"
+      handler.new(reply:, amstrad:).process_and_send
+    end
 
-      amstrad.send_to_amstrad(reply)
-      debug "Sent to Amstrad: #{reply}"
+    def response_handler_klass(reply)
+      reply.match?(/{'?dalle'?:/) ? ImageResponseHandler : TextResponseHandler
     end
 
     def chat_gpt
       @chat_gpt ||= ChatGpt.new(api_key:, prompt: PROMPT)
     end
-
-    attr_reader :api_key, :amstrad
   end
 end
