@@ -33,8 +33,6 @@ module AmstradGpt
     private
 
     def extract_dalle_prompt(reply)
-      # the regex is a bit flexible here
-      # as ChatGPT is not consistent in the format of the reply
       parsed = Crack::JSON.parse(reply)
       parsed['dalle']
     end
