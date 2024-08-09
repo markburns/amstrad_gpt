@@ -32,8 +32,12 @@ module AmstradGpt
       pastel_cyan: [128, 255, 255],
       bright_yellow: [255, 255, 0],
       pastel_yellow: [255, 255, 128],
-      bright_white: [255, 255, 255],
+      bright_white: [255, 255, 255]
     }
+
+    def self.color_index(rgb)
+      AMSTRAD_COLORS.values.index(rgb)
+    end
 
     def initialize(filename)
       @filename = filename
@@ -60,7 +64,7 @@ module AmstradGpt
         TARGET_HEIGHT.times.map do |y|
           avg_color = average_block_color(start_x: x * x_scale,
                                           start_y: y * y_scale)
-          find_closest_amstrad_color(avg_color)
+          self.class.find_closest_amstrad_color(avg_color)
         end
       end
     end
@@ -104,7 +108,7 @@ module AmstradGpt
 
           # Compute the average color for this target pixel
           avg_color = [total_r / count, total_g / count, total_b / count].map(&:to_i)
-          chosen_color = find_closest_amstrad_color(avg_color)
+          chosen_color = self.class.find_closest_amstrad_color(avg_color)
           target_image[target_y][target_x] = chosen_color
 
           # Calculate the error and distribute it
@@ -140,7 +144,7 @@ module AmstradGpt
       height.times do |y|
         width.times do |x|
           original = color_array[y][x].zip(error_map[y][x]).map { |c, e| (c + e).clamp(0, 255) }
-          closest_color = find_closest_amstrad_color(original)
+          closest_color = self.class.find_closest_amstrad_color(original)
           color_array[y][x] = closest_color
 
           error = [original[0] - closest_color[0], original[1] - closest_color[1], original[2] - closest_color[2]]
@@ -168,7 +172,7 @@ module AmstradGpt
       height.times do |y|
         width.times do |x|
           old_pixel = new_color_array[y][x]
-          new_pixel = find_closest_amstrad_color(old_pixel)
+          new_pixel = self.class.find_closest_amstrad_color(old_pixel)
           color_array[y][x] = new_pixel
 
           error = [
@@ -235,7 +239,7 @@ module AmstradGpt
       [avg_r, avg_g, avg_b]
     end
 
-    def find_closest_amstrad_color(color)
+    def self.find_closest_amstrad_color(color)
       min_distance = Float::INFINITY
       closest_color = nil
 
@@ -251,7 +255,7 @@ module AmstradGpt
       closest_color
     end
 
-    def euclidean_color_distance(a, b)
+    def self.euclidean_color_distance(a, b)
       Math.sqrt(
         (b[0] - a[0])**2 +
         (b[1] - a[1])**2 +

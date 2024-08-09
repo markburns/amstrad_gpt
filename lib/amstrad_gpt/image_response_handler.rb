@@ -2,41 +2,55 @@ require 'amstrad_gpt/image_processing'
 require 'json'
 require 'base64'
 require 'open-uri'
+require 'crack'
+require 'amstrad_gpt/open_ai_connection'
+require 'amstrad_gpt/debug'
 
 module AmstradGpt
   class ImageResponseHandler
     include Debug
 
-    def initialize(reply:, amstrad:)
+    def initialize(reply:, amstrad:, api_key:)
       @reply = reply
       @amstrad = amstrad
+      @api_key = api_key
     end
 
     def process_and_send
       dalle_prompt = extract_dalle_prompt(@reply)
-      image_url = generate_image(dalle_prompt)
-      processed_image = process_image(image_url)
-      encoded_image = encode_image_for_amstrad(processed_image)
-      @amstrad.send_to_amstrad("IMG:#{encoded_image}")
+
+      begin
+        image_url = generate_image(dalle_prompt)
+        processed_image = process_image(image_url)
+        encoded_image = encode_image_for_amstrad(processed_image)
+        amstrad.send_to_amstrad("IMG:#{encoded_image}")
+      rescue StandardError => e
+        error_message = "Error generating image: #{e.message}"
+        amstrad.send_to_amstrad("TXT:#{error_message}")
+      end
     end
 
     private
 
     def extract_dalle_prompt(reply)
-      match = reply.match(/\{dalle: "(.*?)"\}/)
-      match[1] if match
+      # the regex is a bit flexible here
+      # as ChatGPT is not consistent in the format of the reply
+      parsed = Crack::JSON.parse(reply)
+      parsed['dalle']
     end
 
     def generate_image(prompt)
-      # This is a placeholder. You'll need to implement the actual DALL-E API call here.
-      # For now, we'll just return a placeholder image URL.
-      "https://via.placeholder.com/320x200"
+      OpenAiConnection.image(
+        api_key:,
+        prompt:,
+        size: '512x512',
+      )
     end
 
     def process_image(image_url)
       # Download the image
       image_data = URI.open(image_url).read
-      
+
       # Save the image temporarily
       temp_file = Tempfile.new(['image', '.png'])
       temp_file.binmode
@@ -54,12 +68,12 @@ module AmstradGpt
 
     def encode_image_for_amstrad(processed_image)
       # Convert the 2D array of RGB values to a string of Amstrad color indices
-      color_indices = processed_image.flatten(1).map do |rgb|
-        ImageProcessing::AMSTRAD_COLORS.values.index(rgb)
+      colors = processed_image.map do |rgb|
+        ImageProcessing.color_index(rgb)
       end
 
       # Perform run-length encoding
-      rle_encoded = run_length_encode(color_indices)
+      rle_encoded = run_length_encode(colors)
 
       # Convert to Base64 for efficient transmission
       Base64.strict_encode64(rle_encoded.pack('C*'))
@@ -83,5 +97,7 @@ module AmstradGpt
       encoded << count << last
       encoded
     end
+
+    attr_reader :reply, :amstrad, :api_key
   end
 end

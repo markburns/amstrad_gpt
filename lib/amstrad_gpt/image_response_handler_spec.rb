@@ -1,8 +1,10 @@
 require 'amstrad_gpt/image_response_handler'
+require 'amstrad_gpt/amstrad'
 
 RSpec.describe AmstradGpt::ImageResponseHandler do
-  subject { described_class.new(reply: reply, amstrad: amstrad) }
+  subject { described_class.new(reply:, amstrad:, api_key:) }
 
+  let(:api_key) { 'fake-api-key' }
   let(:reply) { '{dalle: "A futuristic city"}' }
   let(:amstrad) { instance_double(AmstradGpt::Amstrad, send_to_amstrad: nil) }
   let(:image_processor) { instance_double(AmstradGpt::ImageProcessing, apply_downsize_with_dithering: [[0, 0, 0]]) }
@@ -31,8 +33,26 @@ RSpec.describe AmstradGpt::ImageResponseHandler do
   end
 
   describe '#generate_image' do
+    before do
+      expect(AmstradGpt::OpenAiConnection).to receive(:post).with(
+        url: 'https://api.openai.com/v1/images/generations',
+        api_key:,
+        body: { 
+          prompt: "A futuristic city" ,
+          n: 1,
+          size: "512x512",
+          response_format: "url"
+        },
+      ).and_return({ data: [{url: }] }.with_indifferent_access)
+    end
+
+    let(:url) do
+      "https://via.placeholder.com/512x512"
+    end
+
     it 'returns a placeholder image URL' do
-      expect(subject.send(:generate_image, "A futuristic city")).to eq("https://via.placeholder.com/256x160")
+      expect(subject.send(:generate_image, "A futuristic city"))
+        .to eq(url)
     end
   end
 

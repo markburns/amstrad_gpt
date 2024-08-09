@@ -1,7 +1,8 @@
 require 'amstrad_gpt/chat_gpt'
 require 'amstrad_gpt/amstrad'
 require 'amstrad_gpt/debug'
-require 'amstrad_gpt/response_handler_factory'
+require 'amstrad_gpt/text_response_handler'
+require 'amstrad_gpt/image_response_handler'
 
 module AmstradGpt
   class Gateway
@@ -31,7 +32,6 @@ module AmstradGpt
     def initialize(api_key:, amstrad:)
       @api_key = api_key
       @amstrad = amstrad
-      @response_handler_factory = ResponseHandlerFactory.new(amstrad: amstrad)
     end
 
     def name
@@ -46,7 +46,7 @@ module AmstradGpt
 
     delegate :send_message, :messages, to: :chat_gpt
 
-    attr_reader :amstrad
+    attr_reader :amstrad, :api_key
 
     private
 
@@ -57,12 +57,17 @@ module AmstradGpt
 
       debug "Received reply from ChatGPT: #{reply}"
 
-      handler = @response_handler_factory.create_handler(reply)
-      handler.process_and_send
+      handler = response_handler_klass(reply)
+      debug "Using handler: #{handler.class}"
+      handler.new(reply:, amstrad:).process_and_send
+    end
+
+    def response_handler_klass(reply)
+      reply.match?(/{'?dalle'?:/) ? ImageResponseHandler : TextResponseHandler
     end
 
     def chat_gpt
-      @chat_gpt ||= ChatGpt.new(api_key: @api_key, prompt: PROMPT)
+      @chat_gpt ||= ChatGpt.new(api_key:, prompt: PROMPT)
     end
   end
 end

@@ -8,7 +8,7 @@ RSpec.describe AmstradGpt::TextResponseHandler do
 
   describe '#process_and_send' do
     it 'sends the text message to the Amstrad' do
-      expect(amstrad).to receive(:send_to_amstrad).with("TXT#{reply}")
+      expect(amstrad).to receive(:send_to_amstrad).with("TXT:#{reply}")
       subject.process_and_send
     end
   end
