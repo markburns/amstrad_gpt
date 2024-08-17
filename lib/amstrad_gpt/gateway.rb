@@ -1,14 +1,15 @@
-require 'amstrad_gpt/chat_gpt'
-require 'amstrad_gpt/amstrad'
-require 'amstrad_gpt/debug'
-require 'amstrad_gpt/text_response_handler'
-require 'amstrad_gpt/image_response_handler'
+# frozen_string_literal: true
+
+require "amstrad_gpt/chat_gpt"
+require "amstrad_gpt/amstrad"
+require "amstrad_gpt/debug"
+require "amstrad_gpt/images/response_handler"
 
 module AmstradGpt
   class Gateway
     include Debug
 
-    PROMPT = <<~PROMPT.freeze
+    PROMPT = <<~PROMPT
       A portal to the past has been opened.
       As far as the user is concerned you are an all knowing AI.
       You are communicating with the user using an Amstrad CPC from 1985.
@@ -21,8 +22,10 @@ module AmstradGpt
       You MUST communicate in ASCII to avoid mojibake for the user.
 
       If the user requests an image, respond with a message in this format:
-      {'role': 'assistant', 'content': "{dalle: \"dalle prompt goes here\"}"}
-      Replace "dalle prompt goes here" with an appropriate prompt for DALL-E to generate the requested image.
+      ```json
+      {"dalle": \"dalle image creation prompt\"}
+      ```
+      Replace "dalle image creation prompt" with an appropriate prompt for DALL-E to generate the requested image.
     PROMPT
 
     def self.run(...)

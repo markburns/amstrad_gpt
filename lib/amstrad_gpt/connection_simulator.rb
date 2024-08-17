@@ -1,7 +1,9 @@
-require 'amstrad_gpt/interface'
-require 'amstrad_gpt/amstrad'
-require 'amstrad_gpt/socat'
-require 'amstrad_gpt/simulated_amstrad'
+# frozen_string_literal: true
+
+require "amstrad_gpt/interface"
+require "amstrad_gpt/amstrad"
+require "amstrad_gpt/socat"
+require "amstrad_gpt/simulated_amstrad"
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 # ┃ POST /simulate_amstrad_to_gpt_message ┃

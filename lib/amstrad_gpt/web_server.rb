@@ -1,5 +1,7 @@
-require 'sinatra/base'
-require 'json'
+# frozen_string_literal: true
+
+require "sinatra/base"
+require "json"
 
 module AmstradGpt
   class WebServer < Sinatra::Base
@@ -9,24 +11,28 @@ module AmstradGpt
     set :port, 4567
     set :environment, :production
 
-    post '/send_message' do
+    post "/send_message" do
       gateway.send_message(params[:message])
     end
 
-    post '/simulate_send_message' do
-      next 'No simulator running' if simulator.nil?
+    post "/simulate_send_message" do
+      next "No simulator running" if simulator.nil?
 
       simulator.simulate_message_send(params[:message])
 
       "Message sent\n"
     end
 
-    get '/simulated_messages' do
+    get "/simulated_messages" do
       list simulator.received_messages
     end
 
-    get '/messages' do
+    get "/messages" do
       list gateway.messages
+    end
+
+    post "/send_to_amstrad" do
+      puts gateway.send_to_amstrad(params[:message])
     end
 
     private
