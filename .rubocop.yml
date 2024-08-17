@@ -1,0 +1,18 @@
+AllCops:
+  NewCops: enable
+
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+  Enabled: true
+
+Style/QuotedSymbols:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude: 
+    - amstrad_gpt.gemspec
+    - '**/*_spec.rb'
+
+Style/Documentation:
+  Enabled: false
