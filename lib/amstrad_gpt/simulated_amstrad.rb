@@ -1,10 +1,12 @@
-require 'amstrad_gpt/debug'
+# frozen_string_literal: true
+
+require "amstrad_gpt/debug"
 
 module AmstradGpt
   class SimulatedAmstrad
     include Debug
 
-    def initialize(base_sleep_duration: 0.1, amstrad_simulated_tty:)
+    def initialize(amstrad_simulated_tty:, base_sleep_duration: 0.1)
       @base_sleep_duration = base_sleep_duration
       @amstrad_simulated_tty = amstrad_simulated_tty
 
@@ -63,7 +65,7 @@ module AmstradGpt
       self.class.name
     end
 
-    attr_reader :base_sleep_duration, :amstrad_simulated_tty
+    attr_reader :base_sleep_duration, :amstrad_simulated_tty, :tty, :mutex, :buffer
 
     def maybe_message?
       message = nil
@@ -71,7 +73,7 @@ module AmstradGpt
       mutex.synchronize do
         puts buffer if buffer.length.positive?
 
-        if buffer.end_with?("\n\n\n")
+        if buffer.end_with?(Amstrad::AMSTRAD_MESSAGE_DELIMITER)
           message = buffer[0..-4].strip
           buffer.clear
         end
@@ -95,7 +97,5 @@ module AmstradGpt
     def interface
       @interface ||= Interface.new(tty: amstrad_simulated_tty)
     end
-
-    attr_reader :tty, :mutex, :base_sleep_duration, :buffer
   end
 end

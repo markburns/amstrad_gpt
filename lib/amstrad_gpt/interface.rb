@@ -1,5 +1,7 @@
-require 'rubyserial'
-require 'amstrad_gpt/debug'
+# frozen_string_literal: true
+
+require "rubyserial"
+require "amstrad_gpt/debug"
 
 module AmstradGpt
   class Interface
@@ -18,8 +20,13 @@ module AmstradGpt
     end
 
     def write(message)
-      serial_port.write(message).tap do
-        debug("Writing message: #{message}")
+      debug("Writing message: #{message}")
+
+      message.each_char do |c|
+        debug("Sending char: #{c.inspect}")
+
+        sleep(0.02) # sleep for 1/50th of a second (20ms)
+        serial_port.write(c)
       end
     end
 

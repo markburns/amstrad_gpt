@@ -35,35 +35,44 @@ module AmstradGpt
     end
 
     def name
-      'Gateway'
+      "Gateway"
     end
 
     def run
-      amstrad.receive_from_amstrad do |message|
-        forward(message)
+      amstrad.receive_from_amstrad do |query|
+        forward_query(query)
       end
     end
 
     delegate :send_message, :messages, to: :chat_gpt
+    delegate :send_to_amstrad, to: :amstrad
 
     attr_reader :amstrad, :api_key
 
     private
 
-    def forward(message)
-      debug "Forwarding message: #{message}"
+    def forward_query(query)
+      debug "Forwarding query: #{query}"
 
-      reply = chat_gpt.send_message(message)
+      reply = chat_gpt.send_message(query)
 
       debug "Received reply from ChatGPT: #{reply}"
 
-      handler = response_handler_klass(reply)
-      debug "Using handler: #{handler.class}"
-      handler.new(reply:, amstrad:).process_and_send
+      reply = change_reply(reply)
+
+      amstrad.send_to_amstrad(reply)
     end
 
-    def response_handler_klass(reply)
-      reply.match?(/{'?dalle'?:/) ? ImageResponseHandler : TextResponseHandler
+    TEXT_RESPONSE_HANDLER = -> { "TXT:#{_1}" }
+
+    def change_reply(reply)
+      case reply
+      when /{["']?dalle["']?:/
+        debug "Using handler: Images::ResponseHandler"
+        Images::ResponseHandler.call(reply:, api_key:)
+      else
+        TEXT_RESPONSE_HANDLER.call(reply)
+      end
     end
 
     def chat_gpt

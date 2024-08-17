@@ -45,7 +45,7 @@ module AmstradGpt
     end
 
     def simulate_message_send(message)
-      message = "#{message}\n\n\n" unless message.end_with?("\n\n\n")
+      message = Amstrad.delimit(message)
 
       simulated_amstrad.type(message)
     end
@@ -58,7 +58,7 @@ module AmstradGpt
 
     def receive_from_gpt
       simulated_amstrad.receive_from_gpt do |content|
-        received_messages.push({role: 'assistant', content:})
+        received_messages.push({ role: "assistant", content: })
       end
     end
 
