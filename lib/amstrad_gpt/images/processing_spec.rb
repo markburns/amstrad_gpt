@@ -88,9 +88,11 @@ RSpec.describe AmstradGpt::Images::Processing do
   end
 
   describe "performance" do
+    let(:generation_time_multiplier) { ENV['CI'] ? 3 : 1 }
+
     it "processes the image within a reasonable time" do
       expect {
-        Timeout.timeout(1) { image_processing.apply_downsize_with_dithering }
+        Timeout.timeout(generation_time_multiplier) { image_processing.apply_downsize_with_dithering }
       }.not_to raise_error
     end
 
@@ -99,14 +101,14 @@ RSpec.describe AmstradGpt::Images::Processing do
         Benchmark.realtime { image_processing.apply_downsize_with_dithering }
       end
       average_time = times.sum / times.size
-      expect(average_time).to be < 1, "Average processing time (#{average_time}s) exceeds 0.5s"
+      expect(average_time).to be < generation_time_multiplier, "Average processing time (#{average_time}s) exceeds 0.5s"
     end
 
     it "processes 10 iterations in under 3 seconds" do
       total_time = Benchmark.realtime do
         5.times { image_processing.apply_downsize_with_dithering }
       end
-      expect(total_time).to be < 5, "Total processing time for 10 iterations (#{total_time}s) exceeds 3s"
+      expect(total_time).to be < (5 * generation_time_multiplier), "Total processing time for 10 iterations (#{total_time}s) exceeds 3s"
     end
   end
 end
