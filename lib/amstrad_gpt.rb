@@ -32,21 +32,19 @@ module AmstradGpt
     end
 
     def register(resettable:)
-      if resettable.respond_to?(:reset!) && !resettable.is_a?(InstanceDouble)
-        resettable_objects.push(resettable)
-      end
+      resettable_objects.push(resettable) if resettable?(resettable)
     end
 
     private
 
-    def resettable?(resettable:)
+    def resettable?(resettable)
       return unless resettable.respond_to?(:reset!)
 
       return if defined?(InstanceDouble) && resettable.is_a?(InstanceDouble)
 
       true
     end
-      if resettable.respond_to?(:reset!) && !resettable.is_a?(InstanceDouble)
+
     def resettable_objects
       @resettable_objects ||= []
     end

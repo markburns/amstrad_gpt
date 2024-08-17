@@ -15,7 +15,7 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
-  config.before(:each) do
+  config.after(:each) do
     AmstradGpt.reset!
   end
 end
