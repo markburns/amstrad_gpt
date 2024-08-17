@@ -66,7 +66,7 @@ module AmstradGpt
       amstrad.send_to_amstrad(reply)
     end
 
-    TEXT_RESPONSE_HANDLER = -> { "TXT:#{_1}" }
+    TEXT_RESPONSE_HANDLER = -> { "TXT:#{_1.gsub("\n", "\r\n")}" }
 
     def change_reply(reply)
       case reply
