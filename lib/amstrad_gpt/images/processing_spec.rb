@@ -70,23 +70,6 @@ RSpec.describe AmstradGpt::Images::Processing do
     end
   end
 
-  describe "#find_closest_amstrad_color" do
-    it "returns a valid Amstrad color" do
-      input_color = [128, 128, 128]
-      result = image_processing.send(:find_closest_amstrad_color, input_color)
-      expect(AMSTRAD_COLORS.values).to include(result)
-    end
-  end
-
-  describe "#color_index" do
-    it "returns a valid index for Amstrad colors" do
-      AMSTRAD_COLORS.values.each do |color|
-        index = image_processing.send(:color_index, color)
-        expect(index).to be_between(0, AMSTRAD_COLORS.size - 1)
-      end
-    end
-  end
-
   describe "performance" do
     let(:generation_time_multiplier) { ENV['CI'] ? 3 : 1 }
 

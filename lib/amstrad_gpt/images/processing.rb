@@ -8,7 +8,7 @@ module AmstradGpt
       TARGET_WIDTH = 320
       TARGET_HEIGHT = 200
 
-      load './lib/large/color_lookup_table.rb'
+      load 'large/amstrad_gpt/images/color_lookup_table.rb'
 
       def initialize(input_filename:, output_filename:)
         @input_filename = input_filename
@@ -203,22 +203,6 @@ module AmstradGpt
         [avg_r, avg_g, avg_b]
       end
     end
+
   end
 end
-  def find_closest_amstrad_color(input_color)
-    AMSTRAD_COLORS.values.min_by do |amstrad_color|
-      euclidean_distance(input_color, amstrad_color)
-    end
-  end
-
-  def euclidean_distance(color1, color2)
-    Math.sqrt(
-      (color1[0] - color2[0])**2 +
-      (color1[1] - color2[1])**2 +
-      (color1[2] - color2[2])**2
-    )
-  end
-
-  def color_index(color)
-    AMSTRAD_COLORS.values.index(color) || 0
-  end

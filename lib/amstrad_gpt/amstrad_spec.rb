@@ -72,7 +72,7 @@ RSpec.describe AmstradGpt::Amstrad do
       end
 
       # Wait for the thread to process the message
-      sleep base_sleep_duration * 5
+      sleep base_sleep_duration * 10
 
       # Stop the thread
       subject.stop

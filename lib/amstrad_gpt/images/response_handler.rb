@@ -113,7 +113,7 @@ module AmstradGpt
         begin
           # Convert the 2D array of RGB values to a string of Amstrad color indices
           colors = processed_image.flatten(1).map do |rgb|
-            AMSTRAD_COLORS.values.index(find_closest_amstrad_color(rgb)) || 0
+            Images.lookup(rgb) || 0
           end
 
           # Perform run-length encoding
