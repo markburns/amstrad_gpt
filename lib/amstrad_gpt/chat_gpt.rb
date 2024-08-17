@@ -1,5 +1,7 @@
-require 'faraday'
-require 'json'
+# frozen_string_literal: true
+
+require "faraday"
+require "json"
 
 module AmstradGpt
   class ChatGpt
@@ -9,7 +11,7 @@ module AmstradGpt
     end
 
     def send_message(content)
-      append({ role: 'user', content: })
+      append({ role: "user", content: })
 
       response = post
       parse_response(response.body)
@@ -24,22 +26,22 @@ module AmstradGpt
     def post
       connection.post do |req|
         req.body = {
-          model: 'gpt-4o',
-          messages: [system, *messages],
+          model: "gpt-4o",
+          messages: [system, *messages]
         }.to_json
       end
     end
 
     def system
-      {role: 'system', content: prompt}
+      { role: "system", content: prompt }
     end
 
     def connection
       @connection ||= Faraday.new(
         url: "https://api.openai.com/v1/chat/completions",
         headers: {
-          'Content-Type' => 'application/json',
-          'Authorization' => "Bearer #{api_key}"
+          "Content-Type" => "application/json",
+          "Authorization" => "Bearer #{api_key}"
         }
       ) do |faraday|
         faraday.adapter Faraday.default_adapter
@@ -47,10 +49,10 @@ module AmstradGpt
     end
 
     def parse_response(response_body)
-      choices = JSON.parse(response_body)['choices']
+      choices = JSON.parse(response_body)["choices"]
 
-      message = choices.first['message']
-      append message.tap { _1[:role] = 'assistant' }
+      message = choices.first["message"]
+      append message.tap { _1[:role] = "assistant" }
       message[:content]
     end
 

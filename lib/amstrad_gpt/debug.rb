@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AmstradGpt
   module Debug
     def debug(text)

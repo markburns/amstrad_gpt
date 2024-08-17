@@ -1,72 +1,89 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 
-require 'debug'
-require 'commander/import'
-require 'amstrad_gpt'
+require "debug"
+require "commander/import"
+require "amstrad_gpt"
 
-program :name, 'Amstrad GPT Interface'
-program :version, '0.1.0'
-program :description, 'Facilitates communication between an Amstrad machine and GPT models via serial port.'
+program :name, "Amstrad GPT Interface"
+program :version, "0.1.0"
+program :description, "Facilitates communication between an Amstrad machine and GPT models via serial port."
 
-env_tty = ENV['AMSTRAD_TTY']
-env_api_key = ENV['OPENAI_API_KEY']
+env_tty = ENV["AMSTRAD_TTY"]
+env_api_key = ENV["OPENAI_API_KEY"]
 
 command :run do |c|
-  c.syntax = 'amstrad_gpt run [options]'
-  c.summary = 'Starts the Amstrad GPT interface'
-  c.description = 'This command starts the interface with given TTY and API key options.'
+  c.syntax = "amstrad_gpt run [options]"
+  c.summary = "Starts the Amstrad GPT interface"
+  c.description = "This command starts the interface with given TTY and API key options."
 
-  c.option '--tty STRING',
-    String,
-    'Path to the TTY device (default: ENV["AMSTRAD_TTY"])'
+  c.option "--tty STRING",
+           String,
+           'Path to the TTY device (default: ENV["AMSTRAD_TTY"])'
 
-  c.option '--api-key STRING',
-    String,
-    'OpenAI API key (default: ENV["OPEN_AI_KEY"])'
+  c.option "--api-key STRING",
+           String,
+           'OpenAI API key (default: ENV["OPEN_AI_KEY"])'
 
   c.action do |_args, options|
     tty = options.tty || env_tty
     api_key = options.api_key || env_api_key
 
     if tty.nil? || api_key.nil?
-      puts "Both TTY and API key must be provided either through environment variables AMSTRAD_TTY, OPENAI_API_KEY or as options. --tty --api-key"
+      puts <<~MESSAGE
+        Both TTY and API key must be provided either through environment variables:
+        AMSTRAD_TTY, OPENAI_API_KEY
+
+        or as options
+        --tty --api-key"
+      MESSAGE
       exit(1)
     end
 
-    AmstradGpt.run(tty: , api_key:)
+    AmstradGpt.run(tty:, api_key:)
   end
 end
 
 command :simulate do |c|
-  c.syntax = 'amstrad_gpt simulate [options]'
-  c.summary = 'Starts the Amstrad GPT gateway plus a fake Amstrad for testing'
-  c.description = 'POST to http://localhost:4567/simulate_message_send to send a message from the Amstrad.'
-  c.option '--api-key STRING', String,
-    'OpenAI API key (default: ENV["OPEN_AI_KEY"])'
+  c.syntax = "amstrad_gpt simulate [options]"
+  c.summary = "Starts the Amstrad GPT gateway plus a fake Amstrad for testing"
+  c.description = "POST to http://localhost:4567/simulate_message_send to send a message from the Amstrad."
+  c.option "--api-key STRING", String,
+           'OpenAI API key (default: ENV["OPEN_AI_KEY"])'
 
-  c.option '--amstrad-simulated-tty',
-    String,
-    'Path to the Amstrad end of the simulated serial TTY device, e.g. /dev/ttyS1',
-    required: true
+  c.option "--amstrad-simulated-tty",
+           String,
+           "Path to the Amstrad end of the simulated serial TTY device, e.g. /dev/ttyS1",
+           required: true
 
-  c.option '--mac-simulated-tty',
-    String,
-    'Path to the Mac end of the simulated serial TTY device, e.g. /dev/ttyS2',
-    required: true
+  c.option "--mac-simulated-tty",
+           String,
+           "Path to the Mac end of the simulated serial TTY device, e.g. /dev/ttyS2",
+           required: true
 
   c.action do |_args, options|
     api_key = options.api_key || env_api_key
+    amstrad_simulated_tty = options.amstrad_simulated_tty
+    mac_simulated_tty = options.mac_simulated_tty
 
-    missing_args = false
+    missing_options = []
+    missing_options << "API key" if api_key.nil?
+    missing_options << "--amstrad-simulated-tty" if amstrad_simulated_tty.nil?
+    missing_options << "--mac-simulated-tty" if mac_simulated_tty.nil?
 
-    if api_key.nil?
-      puts "API key must be provided either through environment variables OPENAI_API_KEY or as options. --api-key"
-      missing_args = true
+    if missing_options.any?
+      puts "Error: The following required options are missing:"
+      missing_options.each { |option| puts "- #{option}" }
+      puts "\nPlease provide all required options."
       exit 1
     end
 
-    AmstradGpt.run_simulation(api_key:)
+    AmstradGpt.run_simulation(
+      api_key: api_key,
+      amstrad_simulated_tty: amstrad_simulated_tty,
+      mac_simulated_tty: mac_simulated_tty
+    )
   end
 end

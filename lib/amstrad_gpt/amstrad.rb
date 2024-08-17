@@ -1,13 +1,26 @@
-require 'amstrad_gpt/interface'
-require 'amstrad_gpt/debug'
+# rubocop:todo Style/FrozenStringLiteralComment
+# rubocop:enable Style/FrozenStringLiteralComment
+
+require "amstrad_gpt/interface"
+require "amstrad_gpt/debug"
 
 module AmstradGpt
   class Amstrad
     include Debug
 
-    def initialize(tty:, base_sleep_duration: 0.1)
+    AMSTRAD_DELIMITER = "\r\n"
+    AMSTRAD_MESSAGE_DELIMITER = AMSTRAD_DELIMITER * 3
+
+    def self.delimit(message)
+      return message if message.end_with?(AMSTRAD_MESSAGE_DELIMITER)
+
+      "#{message}#{AMSTRAD_MESSAGE_DELIMITER}"
+    end
+
+    def initialize(tty:, base_sleep_duration: 0.1, interface: nil)
       @tty = tty
       @base_sleep_duration = base_sleep_duration
+      @interface = interface
       setup_mutable_state
     end
 
@@ -25,6 +38,7 @@ module AmstradGpt
     end
 
     def stop
+      @buffer.clear
       @running = false
 
       @reader_thread.join
@@ -36,7 +50,7 @@ module AmstradGpt
     def send_to_amstrad(message)
       mutex.synchronize do
         debug("Sending to Amstrad: #{message}")
-        message << "\n\n\n" unless message.end_with?("\n\n\n")
+        message = "#{message}#{AMSTRAD_MESSAGE_DELIMITER}" unless message.end_with?(AMSTRAD_MESSAGE_DELIMITER)
         interface.write(message)
       end
     end
@@ -44,15 +58,17 @@ module AmstradGpt
     def receive_from_amstrad
       start
 
-      new_thread_running_loop do
-        message = maybe_message?
+      Thread.new do
+        while @running
+          message = maybe_message?
 
-        if message.present?
-          debug("Received from Amstrad: #{message}")
-          yield message
+          if message.present?
+            debug("Received from Amstrad: #{message}")
+            yield message
+          end
+
+          sleep(base_sleep_duration * rand)
         end
-
-        sleep(base_sleep_duration * rand)
       end
     end
 
@@ -66,7 +82,7 @@ module AmstradGpt
       message = nil
 
       mutex.synchronize do
-        if buffer.end_with?("\n\n\n")
+        if buffer.end_with?(AMSTRAD_MESSAGE_DELIMITER)
           message = buffer[0..-4].strip
           buffer.clear
         end

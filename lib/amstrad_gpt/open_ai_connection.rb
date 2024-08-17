@@ -1,20 +1,23 @@
-require 'faraday'
+# frozen_string_literal: true
+
+require "faraday"
 
 module AmstradGpt
   module OpenAiConnection
     def self.image(prompt:, size:, api_key:)
       response = post(
-        url: 'https://api.openai.com/v1/images/generations',
+        url: "https://api.openai.com/v1/images/generations",
         api_key:,
         body: {
+          model: "dall-e-3",
           prompt:,
           n: 1,
           size:,
-          response_format: 'url'
+          response_format: "url"
         }
       )
 
-      response['data'][0]['url']
+      response["data"][0]["url"]
     end
 
     def self.post(body:, api_key:, url:)
@@ -29,8 +32,8 @@ module AmstradGpt
 
     def self.for(api_key:, url:)
       Faraday.new(url:) do |faraday|
-        faraday.headers['Content-Type'] = 'application/json'
-        faraday.headers['Authorization'] = "Bearer #{api_key}"
+        faraday.headers["Content-Type"] = "application/json"
+        faraday.headers["Authorization"] = "Bearer #{api_key}"
         faraday.adapter Faraday.default_adapter
       end
     end

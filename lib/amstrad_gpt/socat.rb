@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AmstradGpt
   class Socat
     def initialize(amstrad_simulated_tty:, mac_simulated_tty:)
@@ -6,13 +8,12 @@ module AmstradGpt
     end
 
     def setup
-      puts '====================================='
+      puts "====================================="
       socat_install_message unless socat_installed?
 
       check_and_setup_socat
-      puts '====================================='
+      puts "====================================="
     end
-
 
     def socat_install_message
       puts <<~INSTALL_MESSAGE
@@ -40,9 +41,16 @@ module AmstradGpt
     end
 
     def setup_socat
-      require 'open3'
+      require "open3"
       puts "Configuring socat..."
-      setup_command = "socat -d -d pty,raw,echo=0,link=#{amstrad_simulated_tty} pty,raw,echo=0,link=#{mac_simulated_tty} &"
+
+      setup_command = <<~COMMAND
+        socat -d -d pty,raw,echo=0, \
+          link=#{amstrad_simulated_tty} \
+          pty,raw,echo=0, \
+          link=#{mac_simulated_tty} &
+      COMMAND
+
       puts setup_command
       system(setup_command)
 

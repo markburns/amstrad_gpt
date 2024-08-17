@@ -1,4 +1,6 @@
-require_relative './connection_simulator'
+# frozen_string_literal: true
+
+require_relative "./connection_simulator"
 
 RSpec.describe AmstradGpt::ConnectionSimulator do
   subject do
@@ -7,9 +9,9 @@ RSpec.describe AmstradGpt::ConnectionSimulator do
     )
   end
 
-  let(:amstrad_simulated_tty) { '/tmp/tty.amstrad_simulated_tty' }
-  let(:mac_simulated_tty) { '/tmp/tty.mac_simulated_tty' }
-  let(:base_sleep_duration) { 0.1 }
+  let(:amstrad_simulated_tty) { "/tmp/tty.amstrad_simulated_tty" }
+  let(:mac_simulated_tty) { "/tmp/tty.mac_simulated_tty" }
+  let(:base_sleep_duration) { 0.01 }
   let(:interface_double) { instance_double(AmstradGpt::Interface) }
   let(:amstrad_double) { instance_double(AmstradGpt::Amstrad) }
 
@@ -20,19 +22,16 @@ RSpec.describe AmstradGpt::ConnectionSimulator do
     allow(AmstradGpt::Amstrad).to receive(:new).and_return(amstrad_double)
   end
 
-  describe '#simulate_message_send' do
-    it 'sends a formatted message through the simulated interface' do
-      message = 'Hello, GPT!'
+  describe "#simulate_message_send" do
+    it "sends a formatted message through the simulated interface" do
+      message = "Hello, GPT!"
+      expect_any_instance_of(AmstradGpt::SimulatedAmstrad).to receive(:type).with(AmstradGpt::Amstrad.delimit(message))
       subject.simulate_message_send(message)
-
-      expect(interface_double)
-        .to have_received(:write)
-        .with("#{message}\n\n\n")
     end
   end
 
-  describe '#fake_amstrad' do
-    it 'returns a memoized instance of Amstrad initialized with the mac simulated tty' do
+  describe "#fake_amstrad" do
+    it "returns a memoized instance of Amstrad initialized with the mac simulated tty" do
       expect(AmstradGpt::Amstrad)
         .to receive(:new)
         .with(
