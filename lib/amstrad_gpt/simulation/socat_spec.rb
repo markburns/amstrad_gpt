@@ -2,7 +2,7 @@
 
 require_relative "./socat"
 
-RSpec.describe AmstradGpt::Socat do
+RSpec.describe AmstradGpt::Simulation::Socat do
   let(:subject) do
     described_class.new(amstrad_simulated_tty:, mac_simulated_tty:)
   end

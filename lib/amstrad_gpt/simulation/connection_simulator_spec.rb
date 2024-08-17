@@ -2,11 +2,9 @@
 
 require_relative "./connection_simulator"
 
-RSpec.describe AmstradGpt::ConnectionSimulator do
+RSpec.describe AmstradGpt::Simulation::ConnectionSimulator do
   subject do
-    AmstradGpt::ConnectionSimulator.new(
-      base_sleep_duration:
-    )
+    described_class.new(base_sleep_duration:)
   end
 
   let(:amstrad_simulated_tty) { "/tmp/tty.amstrad_simulated_tty" }
@@ -25,7 +23,7 @@ RSpec.describe AmstradGpt::ConnectionSimulator do
   describe "#simulate_message_send" do
     it "sends a formatted message through the simulated interface" do
       message = "Hello, GPT!"
-      expect_any_instance_of(AmstradGpt::SimulatedAmstrad).to receive(:type).with(AmstradGpt::Amstrad.delimit(message))
+      expect_any_instance_of(AmstradGpt::Simulation::Amstrad).to receive(:type).with(AmstradGpt::Amstrad.delimit(message))
       subject.simulate_message_send(message)
     end
   end
