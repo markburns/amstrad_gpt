@@ -9,7 +9,6 @@ module AmstradGpt
       require "amstrad_gpt/amstrad"
       start_gateway(tty:, amstrad: Amstrad.new(tty:), api_key:)
       puts "====================================="
-      web_server.join
     end
 
     def run_simulation(api_key:)
