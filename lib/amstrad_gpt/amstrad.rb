@@ -29,6 +29,8 @@ module AmstradGpt
     end
 
     def start
+      AmstradGpt.register(resettable: self)
+
       @reader_thread = new_thread_running_loop do
         char = interface.next_character
 
@@ -41,10 +43,14 @@ module AmstradGpt
       @buffer.clear
       @running = false
 
-      @reader_thread.join
+      @reader_thread&.join
       @reader_thread = nil
 
       interface.shutdown
+    end
+
+    def reset!
+      stop
     end
 
     def send_to_amstrad(message)
