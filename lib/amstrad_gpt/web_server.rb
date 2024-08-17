@@ -6,6 +6,12 @@ require "json"
 module AmstradGpt
   class WebServer < Sinatra::Base
     cattr_accessor :gateway, :simulator
+
+    def self.reset!
+      self.gateway = nil
+      self.simulator = nil
+    end
+
     delegate :gateway, :simulator, to: :class
 
     set :port, 4567

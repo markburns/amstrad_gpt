@@ -24,7 +24,22 @@ module AmstradGpt
                     simulator:)
     end
 
+    def reset!
+      require "amstrad_gpt/web_server"
+      WebServer.reset!
+      resettable_objects.each(&:reset!)
+      @resettable_objects = nil
+    end
+
+    def register(resettable:)
+      resettable_objects.push(resettable)
+    end
+
     private
+
+    def resettable_objects
+      @resettable_objects ||= []
+    end
 
     def start_gateway(tty:, amstrad:, api_key:, simulator: nil)
       require "amstrad_gpt/gateway"
