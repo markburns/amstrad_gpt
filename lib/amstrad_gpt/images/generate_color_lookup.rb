@@ -26,8 +26,8 @@ end
 
 puts 'calculated color lookup table'
 
-File.open('lib/amstrad_gpt/images/color_lookup_table.rb', 'w') do |f|
-  f.write("COLOR_LOOKUP = #{color_lookup}")
+File.open('lib/large/color_lookup_table.rb', 'w') do |f|
+  f.write("module AmstradGpt\n  module Images\n\nCOLOR_LOOKUP = #{color_lookup}\n  end\nend")
 end
 
 

@@ -8,7 +8,7 @@ module AmstradGpt
       TARGET_WIDTH = 320
       TARGET_HEIGHT = 200
 
-      load './lib/amstrad_gpt/images/color_lookup_table.rb'
+      load './lib/large/color_lookup_table.rb'
 
       def initialize(input_filename:, output_filename:)
         @input_filename = input_filename
